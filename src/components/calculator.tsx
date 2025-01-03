@@ -7,7 +7,6 @@ const Calculator: React.FC = () => {
     arr: 0,
     pp: 0,
     pi: 0,
-    mirr: 0,
   });
 
   const [cashFlowDetails, setCashFlowDetails] = useState<
@@ -38,12 +37,6 @@ const Calculator: React.FC = () => {
     const economicLife = parseInt(
       (document.getElementById("economicLife") as HTMLInputElement).value
     );
-    const financingRate = parseFloat(
-      (document.getElementById("financingRate") as HTMLInputElement).value
-    ) / 100;
-    const reinvestmentRate = parseFloat(
-      (document.getElementById("reinvestmentRate") as HTMLInputElement).value
-    ) / 100;
 
     let npv = 0;
     let totalCashFlow = 0;
@@ -91,10 +84,9 @@ const Calculator: React.FC = () => {
     const irr = calculateIRR(cashFlows);
     const arr = (totalCashFlow / salesInput.length) / investment * 100;
     const pi = npv / investment;
-    const mirr = calculateMIRR(cashFlows, financingRate, reinvestmentRate);
 
     setCashFlowDetails(cashFlowDetails);
-    setResults({ npv, irr, arr, pp: paybackPeriod, pi, mirr });
+    setResults({ npv, irr, arr, pp: paybackPeriod, pi });
   };
 
   const calculateIRR = (cashFlows: number[]) => {
@@ -115,78 +107,31 @@ const Calculator: React.FC = () => {
     return rate * 100;
   };
 
-  const calculateMIRR = (cashFlows: number[], financingRate: number, reinvestmentRate: number) => {
-    const positiveFlows = cashFlows
-      .filter(cf => cf > 0)
-      .reduce((acc, cf, i) => acc + cf * Math.pow(1 + reinvestmentRate, cashFlows.length - 1 - i), 0);
-
-    const negativeFlows = cashFlows
-      .filter(cf => cf < 0)
-      .reduce((acc, cf, i) => acc + cf / Math.pow(1 + financingRate, i), 0);
-
-    return Math.pow(-positiveFlows / negativeFlows, 1 / (cashFlows.length - 1)) - 1;
-  };
-
   return (
     <div className="bg-gray-100 min-h-screen flex items-center justify-center">
       <div className="container mx-auto p-5 bg-white rounded shadow-lg">
-        <h1 className="text-2xl font-bold mb-5 text-center">Investment Feasibility Calculator</h1>
+        <h1 className="text-2xl font-bold mb-5 text-center">
+          Investment Feasibility Calculator
+        </h1>
+        <h2 className="text-lg font-bold mb-4">Kelompok:</h2>
+        <ul className="list-disc ml-5">
+          <li>LUKAS NEROTUMI LENA 91124009</li>
+          <li>MARTHEN PRIMAGALIH M 91124010</li>
+          <li>MOHAMAD FAUZAN AKMAL PRATAMA 91124012</li>
+          <li>MUHAMMAD ASRORI 91124013</li>
+          <li>OKTA PURNAMA 91124015</li>
+          <li>WILDAN FIRDAUS 91124070</li>
+        </ul>
         <form onSubmit={calculate} className="space-y-4">
-          <div>
-            <label className="block text-gray-700">Initial Investment (Rp):</label>
-            <input type="number" id="investment" className="w-full p-2 border rounded" required />
-          </div>
-          <div>
-            <label className="block text-gray-700">Economic Life (Years):</label>
-            <input type="number" id="economicLife" className="w-full p-2 border rounded" required />
-          </div>
-          <div>
-            <label className="block text-gray-700">Financing Rate (%):</label>
-            <input type="number" id="financingRate" className="w-full p-2 border rounded" required />
-          </div>
-          <div>
-            <label className="block text-gray-700">Reinvestment Rate (%):</label>
-            <input type="number" id="reinvestmentRate" className="w-full p-2 border rounded" required />
-          </div>
-          <div>
-            <label className="block text-gray-700">Sales Projection (comma-separated):</label>
-            <input type="text" id="sales" className="w-full p-2 border rounded" required />
-          </div>
-          <div>
-            <label className="block text-gray-700">Variable Cost Percentage (%):</label>
-            <input type="number" id="costPercentage" className="w-full p-2 border rounded" required />
-          </div>
-          <div>
-            <label className="block text-gray-700">Fixed Cost (Rp):</label>
-            <input type="number" id="fixedCost" className="w-full p-2 border rounded" required />
-          </div>
-          <div>
-            <label className="block text-gray-700">Tax Rate (%):</label>
-            <input type="number" id="taxRate" className="w-full p-2 border rounded" required />
-          </div>
-          <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">Calculate</button>
+          {/* Form inputs here */}
+          <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">
+            Calculate
+          </button>
         </form>
         <div className="mt-6">
           <h2 className="text-xl font-bold">Cash Flow Details:</h2>
           <table className="table-auto w-full text-left border-collapse border border-gray-300">
-            <thead>
-              <tr>
-                <th className="border border-gray-300 px-4 py-2">Year</th>
-                <th className="border border-gray-300 px-4 py-2">EAT (Net Profit)</th>
-                <th className="border border-gray-300 px-4 py-2">Depreciation</th>
-                <th className="border border-gray-300 px-4 py-2">Cash Flow</th>
-              </tr>
-            </thead>
-            <tbody>
-              {cashFlowDetails.map((detail, index) => (
-                <tr key={index}>
-                  <td className="border border-gray-300 px-4 py-2">Year {detail.year}</td>
-                  <td className="border border-gray-300 px-4 py-2">Rp {detail.netProfit.toFixed(2)}</td>
-                  <td className="border border-gray-300 px-4 py-2">Rp {detail.depreciation.toFixed(2)}</td>
-                  <td className="border border-gray-300 px-4 py-2">Rp {detail.cashFlow.toFixed(2)}</td>
-                </tr>
-              ))}
-            </tbody>
+            {/* Table headers and rows */}
           </table>
         </div>
         <div className="mt-6">
@@ -196,7 +141,6 @@ const Calculator: React.FC = () => {
           <p>ARR: {results.arr.toFixed(2)}%</p>
           <p>Payback Period: {results.pp} years</p>
           <p>Profitability Index: {results.pi.toFixed(2)}</p>
-          <p>MIRR: {results.mirr.toFixed(2)}%</p>
         </div>
       </div>
     </div>
