@@ -3,24 +3,12 @@ document.getElementById("calculator-form").addEventListener("submit", function (
   e.preventDefault();
 
   // Ambil Input dari Form
-  const salesInput = document.getElementById("sales").value;
+  const sales = document.getElementById("sales").value.split(",").map(Number);
   const costPercentage = parseFloat(document.getElementById("costPercentage").value) / 100;
   const fixedCost = parseFloat(document.getElementById("fixedCost").value);
   const taxRate = parseFloat(document.getElementById("taxRate").value) / 100;
   const discountRate = parseFloat(document.getElementById("discountRate").value) / 100;
   const investment = parseFloat(document.getElementById("investment").value);
-
-  // Validasi Input
-  if (!salesInput || isNaN(costPercentage) || isNaN(fixedCost) || isNaN(taxRate) || isNaN(discountRate) || isNaN(investment)) {
-    alert("Harap isi semua input dengan benar.");
-    return;
-  }
-
-  const sales = salesInput.split(",").map(Number);
-  if (sales.some(isNaN)) {
-    alert("Harap masukkan proyeksi penjualan sebagai angka yang dipisahkan dengan koma.");
-    return;
-  }
 
   // Variabel Awal untuk Kalkulasi
   let npv = 0;
@@ -51,19 +39,19 @@ document.getElementById("calculator-form").addEventListener("submit", function (
   const arr = (totalCashFlow / sales.length) / investment * 100;
   const pi = npv / investment;
 
+  // Tambahkan Keterangan Kelayakan
+  const feasibility = (npv > 0 && irr > discountRate && pi > 1) ? 
+    "Proyek ini LAYAK untuk diinvestasikan." : 
+    "Proyek ini TIDAK LAYAK untuk diinvestasikan.";
+
   // Tampilkan Hasil di Halaman
   document.getElementById("npv").textContent = `NPV: Rp ${npv.toFixed(2)}`;
   document.getElementById("irr").textContent = `IRR: ${irr.toFixed(2)}%`;
   document.getElementById("arr").textContent = `ARR: ${arr.toFixed(2)}%`;
   document.getElementById("pp").textContent = `Payback Period (PP): ${paybackPeriod > 0 ? paybackPeriod + " years" : "Not Achieved"}`;
   document.getElementById("pi").textContent = `Profitability Index (PI): ${pi.toFixed(2)}`;
-
-  // Tambahkan Keterangan Kelayakan
-  const feasibility = (npv > 0 && irr > discountRate && pi > 1) ? 
-    "Proyek ini LAYAK untuk diinvestasikan." : 
-    "Proyek ini TIDAK LAYAK untuk diinvestasikan.";
-
   document.getElementById("feasibility").textContent = feasibility;
+
   document.getElementById("results").classList.remove("hidden");
 });
 
