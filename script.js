@@ -71,6 +71,20 @@ const teamMembers = [
   "WILDAN FIRDAUS 91124070"
 ];
 
-document.getElementById("team-members").innerHTML = teamMembers
-  .map(member => `<li>${member}</li>`)
-  .join("");
+const teamContainer = document.createElement("div");
+teamContainer.classList.add("bg-white", "p-6", "rounded", "shadow-md", "mt-5");
+
+const teamTitle = document.createElement("h2");
+teamTitle.classList.add("text-xl", "font-bold", "mb-4");
+teamTitle.textContent = "Kelompok:";
+teamContainer.appendChild(teamTitle);
+
+const teamList = document.createElement("ul");
+teamMembers.forEach(member => {
+  const listItem = document.createElement("li");
+  listItem.textContent = member;
+  teamList.appendChild(listItem);
+});
+
+teamContainer.appendChild(teamList);
+document.body.insertBefore(teamContainer, document.querySelector(".container").nextSibling);
